@@ -181,6 +181,6 @@ SQL (profiling, cleaning, joins, constraints, validation) · data quality thinki
 
 ## About
 
-Built by [MIZZYAYO](https://github.com/MIZZYAYO). Connect on LinkedIn: _add your link here_.
+Built by [MIZZYAYO](https://github.com/MIZZYAYO). Connect on LinkedIn: [Daniel Mgbeahurike](https://www.linkedin.com/in/daniel-mgbeahurike-93978b282).
 
 *Data: Yelp Open Dataset, used for educational purposes.*
