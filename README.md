@@ -6,12 +6,13 @@
 
 <p align="center">
   <b>Which complaints hurt restaurant ratings most?</b><br>
-  An end-to-end analysis of ~300,000 Yelp restaurant reviews: SQL cleaning, Python EDA, AI-assisted topic tagging and a responsive dashboard.
+  An end-to-end analysis of ~300,000 Yelp restaurant reviews: SQL cleaning, Python EDA, AI-assisted topic tagging, an interactive web app dashboard and a Power BI version.
 </p>
 
 <p align="center">
   <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-18-336791?logo=postgresql&logoColor=white">
   <img alt="Python" src="https://img.shields.io/badge/Python-EDA-3776AB?logo=python&logoColor=white">
+  <img alt="Web App" src="https://img.shields.io/badge/Web%20App-Interactive-7C3AED?logo=javascript&logoColor=white">
   <img alt="Power BI" src="https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?logo=powerbi&logoColor=black">
   <img alt="Status" src="https://img.shields.io/badge/Status-Stage%201%20complete-brightgreen">
 </p>
@@ -27,8 +28,8 @@
 | **Business question** | What are restaurant customers complaining about, which complaints cost the most stars, and how are they changing over time? |
 | **Who it is for** | Restaurant owners and managers who need to know what to fix first |
 | **Data** | [Yelp Open Dataset](https://business.yelp.com/data/resources/open-dataset/): ~300k reviews from 52k restaurants in 13 US states and Alberta (a random ~6.5% sample) |
-| **Tools** | PostgreSQL (pgAdmin 4), Excel (first look only), Python (pandas, matplotlib, seaborn), AI text analysis, Power BI |
-| **Deliverables** | Clean database, decision log, EDA notebook, AI-tagged complaint topics, responsive dashboard, written findings |
+| **Tools** | PostgreSQL (pgAdmin 4), Excel (first look only), Python (pandas, matplotlib, seaborn), AI text analysis, interactive web app (HTML, CSS, JavaScript), Power BI |
+| **Deliverables** | Clean database, decision log, EDA notebook, AI-tagged complaint topics, interactive web app dashboard, Power BI version, written findings |
 
 ## Project status
 
@@ -37,8 +38,9 @@
 | 1. SQL cleaning | Load raw data, profile every table, clean in PostgreSQL, prove it | **Complete** |
 | 2. Python EDA | Explore ratings, cities, cuisines and time trends | Next |
 | 3. AI analysis | Tag sentiment and complaint topics in review text | Planned |
-| 4. Dashboard | Responsive Power BI dashboard (desktop, tablet, phone) | Planned |
-| 5. Findings | Recommendations for restaurant owners | Planned |
+| 4. Web app dashboard | Interactive, responsive web app (desktop, tablet, phone) | Planned |
+| 5. Power BI version | Power BI report of the same findings | Planned |
+| 6. Findings | Recommendations for restaurant owners | Planned |
 
 ## Questions this project will answer
 
@@ -89,6 +91,8 @@ EDA (exploratory data analysis) means looking at the data from many angles befor
 
 Rules I am following: every chart title states its takeaway, small groups are excluded from rankings, and wording says "is associated with", never "causes".
 
+**Output that feeds the dashboards:** the EDA also exports small summary tables (by year, city, cuisine and star group). The web app and the Power BI report both read these, so every number on a dashboard traces back to a checked analysis.
+
 ## Stage 3: AI-assisted analysis (planned)
 
 Reading 300,000 reviews by hand is impossible, so AI tools will read them for me:
@@ -97,49 +101,60 @@ Reading 300,000 reviews by hand is impossible, so AI tools will read them for me
 - **A free method on all reviews** compared against **a larger AI model on a small sample (about 5,000)**, so I can report how well the cheap method agrees with the stronger one.
 - **A small "ask a question" tool** so questions such as "what do customers hate most about pizza places in Tampa?" can be answered from the data.
 - Short and link-only reviews (flagged in Stage 1) are excluded from topic tagging, and the effect is reported.
+- Topic counts are saved as summary tables (topic by year, city, cuisine and star group) for the dashboards.
 
-## Stage 4: Responsive dashboard plan (Power BI)
+## Stage 4: Interactive web app dashboard (planned)
 
-**Goal:** a dashboard that is clear in 5 seconds and works on a laptop, a tablet and a phone.
+**Goal:** a polished dashboard that feels like an app, with smooth motion and a frosted-glass look, that a restaurant owner can understand in 5 seconds on a laptop or a phone.
 
-**Who opens it:** a restaurant owner, who should learn in 5 seconds how often customers complain, about what, and whether it is getting better or worse.
+**How it works.** Stages 2 and 3 export small summary tables. The web app loads them and draws every chart. It is a snapshot, not a live database connection, and no raw reviews are published. It will be hosted free on GitHub Pages, with the link added to this README.
 
-**Desktop layout (16:9)**
+**Look and feel**
+- Dark and light themes, frosted-glass cards (translucent panels with a blur effect) and a soft glow on one highlight colour.
+- Motion with a purpose: numbers count up when the page loads, charts animate in, cards lift on hover and tooltips follow the cursor.
+- Accessible: respects the "reduce motion" setting, high-contrast text on glass, colour-blind safe palette.
+
+**Desktop layout**
 
 ```
-+--------------------------------------------------------------+
-| Title: What are restaurant customers complaining about?      |
-+--------------+--------------+--------------+-----------------+
-| Reviews      | Avg rating   | % negative   | Top complaint   |   <- KPI cards
-+--------------+--------------+--------------+-----------------+
-| Negative reviews over time   | Complaint topics ranked       |   <- main story
-| (line, by year)              | (horizontal bars)             |
-+------------------------------+-------------------------------+
-| City comparison (bars)       | Cuisine x topic (heatmap)     |
-+------------------------------+-------------------------------+
-| Filters: year range | city | cuisine | star group             |
-+--------------------------------------------------------------+
++--------------------------------------------------------------------+
+| What are restaurant customers complaining about?     [dark | light]  |
++----------+----------+----------+----------+------------------------+
+| Reviews  | Avg      | % nega-  | Top      |  FILTERS (glass panel) |
+|          | rating   | tive     | complaint|  year range slider     |
++----------+----------+----------+----------+  city                  |
+| Complaint topics ranked      | Negative   |  cuisine               |
+| (click a bar to filter all)  | reviews    |  star group            |
+|                              | over time  |  [reset]               |
++------------------------------+------------+------------------------+
+| City comparison              | Cuisine x topic heatmap             |
++------------------------------+-------------------------------------+
 ```
 
-**Phone layout (built separately in Power BI's Phone layout view)**
-1. Title and the 4 KPI cards, stacked
-2. Complaint topics ranked (the key chart)
-3. Negative reviews over time
-4. Filters in a pop-up panel opened by a button, so they do not take up screen space
+**Interactions**
+- Clicking a complaint topic updates every other chart.
+- Filters: year range, city, cuisine and star group, with a reset button.
+- Hover for exact numbers, and a short "how to read this" tip for first-time visitors.
 
-**Responsive design rules**
-- Build the desktop page first, then arrange a separate phone layout with only the key visuals (not everything squeezed in).
-- Filters sit in a bookmark-controlled panel on small screens.
-- One question per chart, at most 6 to 8 visuals per page, text at least 12 pt.
-- Tooltip pages carry the detail instead of extra visuals.
-- Consistent theme, one highlight colour, colour-blind safe palette, sorted bars, no pie charts or 3D.
-- Every chart title states its takeaway and every number shows units and the date range (with 2022 marked as a partial year).
+**Responsive behaviour**
+- Built with a flexible grid: two columns on a tablet, one column on a phone.
+- Phone order: KPI cards first, then the ranked complaint topics, then the trend, with filters in a slide-up drawer so they do not take up screen space.
+- Touch-friendly buttons, readable text sizes, and nothing that scrolls sideways.
 
-**Planned measures (DAX):** Total Reviews, Average Rating, % Negative, Negative Reviews by Topic, Year-over-Year Change.
+**Quality checks before publishing**
+- Every number is cross-checked against SQL or Python.
+- 2022 is labelled as a partial year, and groups with fewer than 30 reviews are hidden.
+- Tested on a real phone and in the browser's phone preview, plus a 5-second test on someone who has not seen it.
 
-**Testing before publishing:** every dashboard number is cross-checked against SQL or Python, the phone layout is previewed in Power BI's phone view, and the 5-second test is run on a friend who has not seen it.
+## Stage 5: Power BI version (planned)
 
-**Sharing:** screenshots (desktop and phone) and a short screen recording are added to this README, plus a link if publishing to the web is available.
+A one-to-two page Power BI report of the same findings, because Power BI is a standard tool in analyst job listings. It reads the same summary tables (or the PostgreSQL `clean` tables).
+
+- Desktop page first, then a separate Phone layout with only the key visuals.
+- Filters in a bookmark-controlled panel on small screens, and tooltip pages for detail.
+- Planned measures (DAX): Total Reviews, Average Rating, % Negative, Negative Reviews by Topic, Year-over-Year Change.
+- One theme, one highlight colour, sorted bars, no pie charts or 3D.
+- Desktop and phone screenshots and a short screen recording added to this README.
 
 ---
 
@@ -148,14 +163,17 @@ Reading 300,000 reviews by hand is impossible, so AI tools will read them for me
 ```
 yelp-restaurant-complaint-analysis/
 ├── README.md
-├── assets/                       # logo and dashboard screenshots
+├── yelp-logo.jpg
+├── assets/                       # dashboard screenshots and recordings
 ├── scripts/
 │   └── sample_yelp.py            # cuts the 4 GB Yelp download to a ~300k review sample
 ├── SQL/                          # numbered cleaning scripts (00 to 07)
 ├── docs/
 │   └── cleaning_log.md           # every cleaning decision with row counts
 ├── notebooks/                    # Python EDA and AI analysis (Stage 2 and 3)
-└── dashboard/                    # Power BI file and exports (Stage 4)
+├── data/summary/                 # small summary tables exported by Stage 2 and 3
+├── app/                          # interactive web app dashboard (Stage 4)
+└── powerbi/                      # Power BI report and exports (Stage 5)
 ```
 
 ## How to reproduce
@@ -164,6 +182,8 @@ yelp-restaurant-complaint-analysis/
 2. In PostgreSQL, create a database and run `SQL/00_create_raw_tables.sql`.
 3. Import the three CSVs into the `raw` tables and check the row counts.
 4. Run the scripts `02` to `06` in order, then `07` to confirm the checks pass.
+
+Steps for the Python analysis, the web app and the Power BI report will be added as each stage is completed.
 
 The raw data is not included in this repository (Yelp's licence allows personal and educational use only).
 
@@ -177,7 +197,7 @@ The raw data is not included in this repository (Yelp's licence allows personal 
 
 ## Skills demonstrated
 
-SQL (profiling, cleaning, joins, constraints, validation) · data quality thinking and documentation · Python EDA · AI-assisted text analysis · dashboard design for desktop and mobile · clear written communication
+SQL (profiling, cleaning, joins, constraints, validation) · data quality thinking and documentation · Python EDA · AI-assisted text analysis · interactive web dashboard design (HTML, CSS, JavaScript) · Power BI · responsive design for desktop and mobile · clear written communication
 
 ## About
 
