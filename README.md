@@ -36,8 +36,8 @@
 | Stage | What happens | Status |
 |---|---|---|
 | 1. SQL cleaning | Load raw data, profile every table, clean in PostgreSQL, prove it | **Complete** |
-| 2. Python EDA | Explore ratings, cities, cuisines and time trends | Next |
-| 3. AI analysis | Tag sentiment and complaint topics in review text | Planned |
+| 2. Python EDA | Explore ratings, cities, cuisines and time trends | **Complete** |
+| 3. AI analysis | Tag sentiment and complaint topics in review text | In progress |
 | 4. Web app dashboard | Interactive, responsive web app (desktop, tablet, phone) | Planned |
 | 5. Power BI version | Power BI report of the same findings | Planned |
 | 6. Findings | Recommendations for restaurant owners | Planned |
@@ -50,7 +50,7 @@
 4. How do cities and cuisines differ?
 5. Did complaints change during 2020 (COVID)?
 
-> Findings will be added here as each stage finishes. Nothing below Stage 1 is a result yet.
+> Findings are added as each stage finishes. First complaint-topic results are in [Stage 3](#stage-3-ai-assisted-analysis-in-progress).
 
 ---
 
@@ -78,7 +78,7 @@ Details: [`SQL/`](SQL/) (numbered scripts) and the full decision log in [`docs/c
 
 ---
 
-## Stage 2: Python EDA (next)
+## Stage 2: Python EDA (complete)
 
 EDA (exploratory data analysis) means looking at the data from many angles before drawing conclusions. The notebook will connect Python to the `clean` tables and cover:
 
@@ -93,7 +93,7 @@ Rules I am following: every chart title states its takeaway, small groups are ex
 
 **Output that feeds the dashboards:** the EDA also exports small summary tables (by year, city, cuisine and star group). The web app and the Power BI report both read these, so every number on a dashboard traces back to a checked analysis.
 
-## Stage 3: AI-assisted analysis (planned)
+## Stage 3: AI-assisted analysis (in progress)
 
 Reading 300,000 reviews by hand is impossible, so AI tools will read them for me:
 
@@ -102,6 +102,18 @@ Reading 300,000 reviews by hand is impossible, so AI tools will read them for me
 - **A small "ask a question" tool** so questions such as "what do customers hate most about pizza places in Tampa?" can be answered from the data.
 - Short and link-only reviews (flagged in Stage 1) are excluded from topic tagging, and the effect is reported.
 - Topic counts are saved as summary tables (topic by year, city, cuisine and star group) for the dashboards.
+
+### First findings (keyword method)
+
+Based on 296,508 restaurant reviews (reviews of hotels, bars and other non-dining businesses filtered out by text). Details: [`notebooks/02_review_topics.ipynb`](notebooks/02_review_topics.ipynb).
+
+- **Most common:** food quality and long waits, each in 35% of negative reviews, then price (30%).
+- **Most costly:** rude service, linked to about 1.3 fewer stars (other topics held fixed), then food quality (-1.0) and getting sick (-0.9).
+- **Rising:** rude service (12% to 22% of negative reviews) and long waits (28% to 35%) from 2009 to 2021. Wait complaints dipped in 2020 (COVID).
+- **By cuisine:** long waits peak at burger, wings and American restaurants (~40%). Chinese restaurants have the most "got sick" mentions (5.6% vs 3.2% overall).
+- **Fix first:** staff attitude, then food quality and wait times.
+
+Keyword tagging is approximate (19% of negative reviews match no topic). Results show association, not cause.
 
 ## Stage 4: Interactive web app dashboard (planned)
 
