@@ -1,0 +1,18 @@
+city,state,reviews,restaurants,pct_negative,margin
+Sparks,NV,2614,282,27.93,1.72
+Metairie,LA,2831,436,24.06,1.57
+Wilmington,DE,2070,456,23.77,1.83
+Franklin,TN,2525,373,23.33,1.65
+Tucson,AZ,16019,1986,22.51,0.65
+Reno,NV,13089,1124,21.93,0.71
+Edmonton,AB,4222,1442,21.44,1.24
+Clearwater,FL,3652,544,20.4,1.31
+Tampa,FL,19642,2341,20.04,0.56
+Boise,ID,4490,678,19.09,1.15
+Indianapolis,IN,16330,2259,18.68,0.6
+Saint Petersburg,FL,7012,843,18.67,0.91
+Nashville,TN,21107,2051,18.61,0.52
+Saint Louis,MO,15961,2005,18.39,0.6
+Philadelphia,PA,44947,4637,17.9,0.35
+New Orleans,LA,30770,1885,16.79,0.42
+Santa Barbara,CA,10566,678,16.37,0.71

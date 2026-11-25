@@ -1,0 +1,31 @@
+category,reviews,restaurants,pct_negative,margin
+Fast Food,15192,4509,42.73,0.79
+Sports Bars,11878,1561,31.23,0.83
+Chicken Wings,11447,2201,30.73,0.85
+Burgers,28970,4380,28.47,0.52
+Steakhouses,15514,1354,23.77,0.67
+Diners,11174,1244,23.61,0.79
+Pizza,31148,5484,23.46,0.47
+Chinese,14581,2487,23.35,0.69
+American (Traditional),66021,6930,23.34,0.32
+Mexican,27963,3718,22.19,0.49
+Italian,28618,3829,21.72,0.48
+Salad,21896,2638,20.31,0.53
+Sushi Bars,14653,1552,19.94,0.65
+Sandwiches,44823,6445,19.4,0.37
+Seafood,40386,3050,19.32,0.39
+Pubs,12826,1226,19.24,0.68
+Japanese,14054,1620,19.22,0.65
+Coffee & Tea,21605,3142,18.59,0.52
+Breakfast & Brunch,56587,5371,18.5,0.32
+American (New),63797,5303,18.46,0.3
+Barbeque,13010,1396,18.19,0.66
+Asian Fusion,12686,1335,17.68,0.66
+Cajun/Creole,16436,792,17.38,0.58
+Southern,13859,862,17.22,0.63
+Desserts,15569,1557,16.87,0.59
+Cocktail Bars,21115,1316,16.5,0.5
+Bakeries,10783,1497,16.14,0.69
+Wine Bars,11934,879,14.92,0.64
+Cafes,18892,2220,14.65,0.5
+Vegetarian,12071,1016,14.17,0.62
