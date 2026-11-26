@@ -316,6 +316,22 @@ kbd { font: 600 12px Inter, system-ui, sans-serif; padding: 2px 6px; border-radi
 .notes p { margin: 0; font-size: 14px; color: var(--text-2); }
 .notes .foot { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--grid); font-size: 13px; }
 
+/* ---------- Custom cursor (mouse users only; added by app.js) ---------- */
+.has-cursor, .has-cursor * { cursor: none !important; }
+.cursor-dot, .cursor-ring {
+  position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none; border-radius: 50%;
+  transform: translate3d(-100px, -100px, 0);
+}
+.cursor-dot { width: 8px; height: 8px; margin: -4px 0 0 -4px; background: var(--accent); }
+.cursor-ring {
+  width: 34px; height: 34px; margin: -17px 0 0 -17px;
+  border: 1.5px solid var(--accent); opacity: .55;
+  transition: width .25s ease, height .25s ease, margin .25s ease, background-color .25s ease, opacity .25s ease, border-color .25s ease;
+}
+.cursor-ring.hover { width: 54px; height: 54px; margin: -27px 0 0 -27px; background: var(--accent-glow); border-color: transparent; opacity: .7; }
+.cursor-ring.down { width: 24px; height: 24px; margin: -12px 0 0 -12px; opacity: .9; }
+.cursor-dot.hidden, .cursor-ring.hidden { opacity: 0; }
+
 /* ---------- Chart entrance motion ---------- */
 @keyframes grow { from { transform: scaleX(0); } }
 .grow { transform-box: fill-box; animation: grow .8s cubic-bezier(.2, .7, .2, 1) both; }
@@ -338,22 +354,68 @@ kbd { font: 600 12px Inter, system-ui, sans-serif; padding: 2px 6px; border-radi
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pair, .recs, .notes-grid { grid-template-columns: minmax(0, 1fr); }
 }
+/* ---------- Phones: flatter, full-width layout so the charts get the room ---------- */
+.now { display: none; }
 @media (max-width: 640px) {
-  .app { padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); gap: 8px; }
-  .topbar { padding: 6px 6px 6px 10px; gap: 8px; }
-  .brand-name { display: none; }
-  .steps { justify-content: flex-start; }
-  .nav-btn { padding: 0 14px; }
-  .nav-btn span { display: none; }               /* arrows only on phones */
+  .app { padding: 0; gap: 0; }
+  .topbar {
+    border-radius: 0; border-width: 0 0 1px; max-width: none;
+    padding: calc(8px + env(safe-area-inset-top)) 12px 10px; gap: 10px;
+  }
+  .brand { flex: 1; min-width: 0; }
+  .brand-name, .steps { display: none; }
+  .now { display: flex; flex-direction: column; min-width: 0; font-weight: 700; font-size: 15px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .now small { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; }
+  .progress { left: 0; right: 0; }
+  .theme-btn { width: 38px; height: 38px; }
+  .viewport { border-radius: 0; }
+
+  .pager {
+    border-radius: 0; border-width: 1px 0 0; max-width: none;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  }
+  .nav-btn { min-height: 44px; padding: 0 14px; }
+  .nav-btn span { display: none; }               /* back = arrow only */
+  .nav-btn.primary { padding: 0 20px; }
   .nav-btn.primary span { display: inline; }
-  .slide-inner { padding: 14px 2px 20px; }
+
+  .slide-inner { padding: 18px 14px 28px; }
+  .eyebrow, .q-num, .q-label { font-size: 11px; }
+  .hero-title { font-size: 27px; }
+  .q-title { font-size: 23px; line-height: 1.2; }
+  .lede, .q-answer { font-size: 15px; line-height: 1.5; }
+  .q-answer::before { display: block; width: max-content; margin: 0 0 6px; }
+
+  /* complaint chips: an open, swipeable row instead of a boxed panel */
+  .chips-bar { margin-top: 14px; padding: 0; background: none; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; flex-direction: column; align-items: stretch; gap: 6px; }
+  .chips-label { padding: 0; font-size: 12px; }
+  .chips { margin: 0 -14px; padding: 2px 14px; }
+  .chip { min-height: 34px; padding: 0 12px; font-size: 12.5px; }
+
+  .slide-inner > .card, .slide-inner > .pair, .slide-inner > .kpis, .slide-inner > .recs { margin-top: 14px; }
+  .pair, .recs { gap: 12px; }
+  .card { padding: 14px 12px 12px; border-radius: 16px; }
+  .card-head { margin-bottom: 8px; }
+  .card h2 { font-size: 15px; }
+  .data-btn { min-height: 30px; padding: 0 10px; }
+  .how { font-size: 12.5px; }
+  .tabs { width: 100%; }
+  .tabs button { flex: 1; padding: 0 8px; }
+
   .kpis { gap: 10px; }
-  .kpi { padding: 14px; }
+  .kpi { padding: 14px 12px; border-radius: 16px; }
+  .kpi-value { font-size: 26px; }
+  .kpi.highlight .kpi-value { font-size: 21px; }  /* "Rude service" fits on one line */
   .kpi-sub { font-size: 12px; }
-  .chips-bar { flex-direction: column; align-items: stretch; gap: 6px; }
-  .chips { margin: 0 -4px; }
-  .card { padding: 16px 14px 14px; border-radius: 16px; }
-  .data-btn { min-height: 30px; }
+  .rec { padding: 16px; }
+  .notes { padding: 16px; }
   .heat-text { font-size: 11px; }
+  .heat-legend .bar { width: 110px; }
   .heat-legend .note { margin-left: 0 !important; flex-basis: 100%; }
+  .start-hint { font-size: 13px; }
+}
+@media (max-width: 360px) {
+  .slide-inner { padding-left: 12px; padding-right: 12px; }
+  .q-title { font-size: 21px; }
+  .kpi-value { font-size: 23px; }
 }

@@ -75,8 +75,9 @@
     const W = Math.max(280, el.clientWidth);
     const rowH = o.rowH || 32, barH = o.barH || 16;
     const top = o.refValue != null ? 22 : 6, bottom = o.ticks ? 26 : 6;
-    const labelW = Math.min(W * 0.42, Math.max(...rows.map((r) => measure(r.label))) + 14);
-    const valueW = o.valueW ?? 58;
+    const small = W < 420;                                       // phones: give the bars more of the width
+    const labelW = Math.min(W * (small ? 0.38 : 0.42), Math.max(...rows.map((r) => measure(r.label, small ? 12 : 13))) + (small ? 10 : 14));
+    const valueW = small ? Math.min(o.valueW ?? 58, 50) : o.valueW ?? 58;
     const plotL = labelW, plotR = W - valueW - 8;
     const H = top + rows.length * rowH + bottom;
     const x = (v) => plotL + ((v - o.min) / (o.max - o.min)) * (plotR - plotL);
@@ -94,7 +95,7 @@
       const g = svgEl("g", { class: "bar-row" + (o.onClick ? " clickable" : "") + (r.key === o.selected ? " selected" : "") }, svg);
       if (o.onClick) { g.setAttribute("tabindex", "0"); g.setAttribute("role", "button"); g.setAttribute("aria-label", `${r.label}: ${r.valueText}`); }
       svgEl("rect", { x: 0, y: yRow, width: W, height: rowH, rx: 8, class: "hit" }, g);
-      text(g, labelW - 12, yRow + rowH / 2, r.label, "label", { "text-anchor": "end", "dominant-baseline": "central" });
+      text(g, labelW - (small ? 8 : 12), yRow + rowH / 2, r.label, "label", { "text-anchor": "end", "dominant-baseline": "central", "font-size": small ? 12 : 13 });
       const bar = svgEl("path", { d: barPath(zero, x(r.value), y, barH), fill: r.color }, g);
       if (animate) {
         bar.classList.add("grow");
@@ -107,7 +108,7 @@
         svgEl("line", { x1: a, x2: a, y1: cy - 4, y2: cy + 4, class: "whisker" }, g);
         svgEl("line", { x1: b, x2: b, y1: cy - 4, y2: cy + 4, class: "whisker" }, g);
       }
-      text(g, W, yRow + rowH / 2, r.valueText, "value", { "text-anchor": "end", "dominant-baseline": "central" });
+      text(g, W, yRow + rowH / 2, r.valueText, "value", { "text-anchor": "end", "dominant-baseline": "central", "font-size": small ? 12 : 13 });
 
       g.addEventListener("pointerenter", (e) => showTip(r.tip, e));
       g.addEventListener("pointermove", moveTip);
@@ -576,6 +577,9 @@
     steps[i].scrollIntoView({ block: "nearest", inline: "center", behavior: reduceMotion ? "auto" : "smooth" });
     document.querySelectorAll("#dots i").forEach((d, k) => d.classList.toggle("on", k === i));
     $("#progress-bar").style.transform = `scaleX(${(i + 1) / slides.length})`;
+    // Phone header shows the current screen instead of the row of tabs
+    const tag = i === 0 ? "Overview" : i === slides.length - 1 ? "Takeaway" : `Q${i} · ${slides[i].dataset.title}`;
+    $("#now").innerHTML = `${esc(tag)}<small>${i + 1} / ${slides.length}</small>`;
     $("#prev").disabled = i === 0;
     $("#next-label").textContent = i === 0 ? "Start" : i === slides.length - 1 ? "Start again" : "Next";
     hideTip();
@@ -614,6 +618,34 @@
     sx = null;
   }, { passive: true });
   window.addEventListener("hashchange", () => goTo(parseInt(location.hash.slice(1), 10) || 0, true));
+
+  // ---------- custom cursor: a dot that follows the mouse and a ring that trails behind ----------
+  // Only for a real mouse (not touch screens) and not when the visitor asked for less motion
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
+    const dot = document.createElement("div"), ring = document.createElement("div");
+    dot.className = "cursor-dot hidden"; ring.className = "cursor-ring hidden";
+    document.body.append(dot, ring);
+    document.documentElement.classList.add("has-cursor");
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    const CLICKABLE = "button, a, .clickable, .chip, [role=tab], .step, .heat-cell";
+    window.addEventListener("pointermove", (e) => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+      dot.classList.remove("hidden"); ring.classList.remove("hidden");
+    });
+    // Ring grows over anything clickable, shrinks while the button is pressed
+    document.addEventListener("pointerover", (e) => ring.classList.toggle("hover", !!e.target.closest(CLICKABLE)));
+    window.addEventListener("pointerdown", () => ring.classList.add("down"));
+    window.addEventListener("pointerup", () => ring.classList.remove("down"));
+    document.addEventListener("pointerleave", () => { dot.classList.add("hidden"); ring.classList.add("hidden"); });
+    // Each frame, move the ring 18% of the way towards the mouse: that gives the smooth trailing effect
+    const follow = () => {
+      rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+      requestAnimationFrame(follow);
+    };
+    requestAnimationFrame(follow);
+  }
 
   // ---------- start-up: opening screen, then the app ----------
   renderText();
