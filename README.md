@@ -38,7 +38,7 @@
 | 1. SQL cleaning | Load raw data, profile every table, clean in PostgreSQL, prove it | **Complete** |
 | 2. Python EDA | Explore ratings, cities, cuisines and time trends | **Complete** |
 | 3. AI analysis | Tag sentiment and complaint topics in review text | In progress |
-| 4. Web app dashboard | Interactive, responsive web app (desktop, tablet, phone) | Planned |
+| 4. Web app dashboard | Interactive, responsive web app (desktop, tablet, phone) | In progress |
 | 5. Power BI version | Power BI report of the same findings | Planned |
 | 6. Findings | Recommendations for restaurant owners | Planned |
 
@@ -115,7 +115,7 @@ Based on 296,508 restaurant reviews (reviews of hotels, bars and other non-dinin
 
 Keyword tagging is approximate (19% of negative reviews match no topic). Results show association, not cause.
 
-## Stage 4: Interactive web app dashboard (planned)
+## Stage 4: Interactive web app dashboard (in progress)
 
 **Goal:** a polished dashboard that feels like an app, with smooth motion and a frosted-glass look, that a restaurant owner can understand in 5 seconds on a laptop or a phone.
 
@@ -144,9 +144,12 @@ Keyword tagging is approximate (19% of negative reviews match no topic). Results
 ```
 
 **Interactions**
-- Clicking a complaint topic updates every other chart.
-- Filters: year range, city, cuisine and star group, with a reset button.
-- Hover for exact numbers, and a short "how to read this" tip for first-time visitors.
+- Pick a complaint (chips, a bar or a heatmap column) and the ranking, star cost, trend and heatmap all follow it.
+- Tabs switch the "where reviews are most negative" chart between cities, states and cuisines.
+- Hover or tap for exact numbers, and every chart has a "Data" button that shows its numbers as a table.
+- Filters by city, year or star group were dropped: the exported summary tables don't break complaints down by city or star group, and adding them would mean publishing much larger tables.
+
+**Build and run:** `python app/build_data.py` turns `data/summary/*.csv` into `app/data.js`, then open `app/index.html` in a browser. No server or build step is needed.
 
 **Responsive behaviour**
 - Built with a flexible grid: two columns on a tablet, one column on a phone.

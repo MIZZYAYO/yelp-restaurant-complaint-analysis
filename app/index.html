@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Restaurant Complaints Dashboard</title>
+  <meta name="description" content="What restaurant customers complain about, which complaints cost the most stars, and how they change over time. An interactive analysis of 300,000 Yelp reviews.">
+  <meta property="og:title" content="What are restaurant customers complaining about?">
+  <meta property="og:description" content="An interactive dashboard built from 300,000 Yelp restaurant reviews: the most common complaints, the ones that cost the most stars, and trends by year, cuisine and city.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#e34948">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e34948'/%3E%3Crect x='7' y='16' width='4' height='9' rx='1.5' fill='white'/%3E%3Crect x='14' y='10' width='4' height='15' rx='1.5' fill='white'/%3E%3Crect x='21' y='6' width='4' height='19' rx='1.5' fill='white'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+
+  <!-- ===== Opening screen ===== -->
+  <div class="splash" id="splash" role="dialog" aria-label="Loading">
+    <div class="splash-inner">
+      <div class="logo-mark" aria-hidden="true"><i></i><i></i><i></i></div>
+      <p class="splash-eyebrow">Yelp Restaurant Review Analysis</p>
+      <h1 class="splash-title">What are restaurant customers complaining about?</h1>
+      <p class="splash-sub" id="splash-sub">Reading 300,000 reviews…</p>
+      <div class="splash-progress" aria-hidden="true"><span></span></div>
+      <button class="splash-skip" id="splash-skip" type="button">Skip</button>
+    </div>
+  </div>
+
+  <!-- ===== App shell ===== -->
+  <div class="app" id="app">
+    <header class="topbar glass">
+      <div class="brand">
+        <span class="logo-mini" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-name">Restaurant Complaints</span>
+      </div>
+      <nav class="steps" id="steps" aria-label="Sections"></nav>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch colour theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
+      </button>
+      <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+    </header>
+
+    <main class="viewport" id="viewport">
+      <div class="track" id="track">
+
+        <!-- 0. Overview -->
+        <section class="slide" data-title="Overview" aria-label="Overview">
+          <div class="slide-inner">
+            <p class="eyebrow">Overview · Yelp restaurant reviews, 2005–2022</p>
+            <h1 class="hero-title">What are restaurant customers complaining about?</h1>
+            <p class="lede" id="lede"></p>
+            <div class="kpis" id="kpis"></div>
+            <article class="card glass" id="card-stars">
+              <header class="card-head">
+                <div><p class="q-label">Starting point</p><h2>How do customers rate restaurants?</h2>
+                <p class="answer" id="answer-stars"></p></div>
+                <button class="data-btn" type="button">Data</button>
+              </header>
+              <div class="chart" id="chart-stars"></div>
+              <p class="how">How to read: each bar is the share of all reviews giving that many stars. Red bars are the negative reviews (1–2★) this dashboard digs into.</p>
+              <div class="table-wrap" hidden></div>
+            </article>
+            <p class="start-hint"><span>Five questions follow.</span> Use the arrows, swipe, or press <kbd>→</kbd> to move on.</p>
+          </div>
+        </section>
+
+        <!-- 1. Most common complaints -->
+        <section class="slide" data-title="Complaints" aria-label="Question 1">
+          <div class="slide-inner">
+            <p class="q-num">Question 1 of 5</p>
+            <h2 class="q-title">What do unhappy customers complain about most?</h2>
+            <p class="q-answer" id="answer-rank"></p>
+            <div class="chips-bar glass"><span class="chips-label">Highlight a complaint</span><div class="chips" role="radiogroup" aria-label="Complaint topic"></div></div>
+            <article class="card glass" id="card-rank">
+              <header class="card-head">
+                <div><h2>Share of negative reviews that mention each complaint</h2></div>
+                <button class="data-btn" type="button">Data</button>
+              </header>
+              <div class="chart" id="chart-rank"></div>
+              <p class="how">How to read: a longer bar means the complaint appears in more negative (1–2★) reviews. One review can mention several complaints, so the bars add up to more than 100%. Hover a bar to see how much more often it appears when customers are unhappy.</p>
+              <div class="table-wrap" hidden></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 2. Star cost -->
+        <section class="slide" data-title="Star cost" aria-label="Question 2">
+          <div class="slide-inner">
+            <p class="q-num">Question 2 of 5</p>
+            <h2 class="q-title">Which complaints hurt a restaurant's rating the most?</h2>
+            <p class="q-answer" id="answer-cost"></p>
+            <div class="chips-bar glass"><span class="chips-label">Highlight a complaint</span><div class="chips" role="radiogroup" aria-label="Complaint topic"></div></div>
+            <article class="card glass" id="card-cost">
+              <header class="card-head">
+                <div><h2>Stars gained or lost when a review mentions the complaint</h2></div>
+                <button class="data-btn" type="button">Data</button>
+              </header>
+              <div class="chart" id="chart-cost"></div>
+              <p class="how">How to read: bars to the left of 0 mean a lower rating. Angry reviews often list several complaints, so each complaint's own effect is separated from the others in the same review (linear regression). Atmosphere is on the right because people mostly mention it as praise.</p>
+              <div class="table-wrap" hidden></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 3. Over time -->
+        <section class="slide" data-title="Over time" aria-label="Question 3">
+          <div class="slide-inner">
+            <p class="q-num">Question 3 of 5</p>
+            <h2 class="q-title">Are complaints getting worse over time?</h2>
+            <p class="q-answer" id="answer-trend"></p>
+            <div class="chips-bar glass"><span class="chips-label">Follow a complaint</span><div class="chips" role="radiogroup" aria-label="Complaint topic"></div></div>
+            <div class="pair">
+              <article class="card glass" id="card-trend">
+                <header class="card-head">
+                  <div><h2 id="trend-title">Negative reviews over time</h2></div>
+                  <button class="data-btn" type="button">Data</button>
+                </header>
+                <div class="chart" id="chart-trend"></div>
+                <p class="how">How to read: the line is the share of all reviews that are negative each year. The shaded band is the margin of error, and the grey column is 2020 (COVID). 2022 is left out because it only has 19 days of data.</p>
+                <div class="table-wrap" hidden></div>
+              </article>
+              <article class="card glass" id="card-topic-trend">
+                <header class="card-head">
+                  <div><h2 id="topic-trend-title">One complaint over time</h2></div>
+                  <button class="data-btn" type="button">Data</button>
+                </header>
+                <div class="chart" id="chart-topic-trend"></div>
+                <p class="how">How to read: the red line is the share of each year's negative reviews that mention the complaint you picked above. Grey lines are the other complaints, for comparison.</p>
+                <div class="table-wrap" hidden></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Cuisines -->
+        <section class="slide" data-title="Cuisines" aria-label="Question 4">
+          <div class="slide-inner">
+            <p class="q-num">Question 4 of 5</p>
+            <h2 class="q-title">Do different cuisines get different complaints?</h2>
+            <p class="q-answer" id="answer-heat"></p>
+            <div class="chips-bar glass"><span class="chips-label">Highlight a complaint</span><div class="chips" role="radiogroup" aria-label="Complaint topic"></div></div>
+            <article class="card glass" id="card-heat">
+              <header class="card-head">
+                <div><h2>How each cuisine compares with the average restaurant</h2></div>
+                <button class="data-btn" type="button">Data</button>
+              </header>
+              <div class="chart" id="chart-heat"></div>
+              <div class="heat-legend" id="heat-legend"></div>
+              <p class="how">How to read: each square compares one cuisine with all restaurants for one complaint. Red means the complaint is more common than usual, blue means less. The number is the gap in percentage points (+6 = 6 points above average). Hover a square for the exact shares.</p>
+              <div class="table-wrap" hidden></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 5. Places -->
+        <section class="slide" data-title="Places" aria-label="Question 5">
+          <div class="slide-inner">
+            <p class="q-num">Question 5 of 5</p>
+            <h2 class="q-title">Where are reviews most negative?</h2>
+            <p class="q-answer" id="answer-places"></p>
+            <article class="card glass" id="card-places">
+              <header class="card-head">
+                <div><h2>Share of reviews that are negative</h2></div>
+                <button class="data-btn" type="button">Data</button>
+              </header>
+              <div class="tabs" role="tablist" id="place-tabs">
+                <button role="tab" data-place="city" aria-selected="true">Cities</button>
+                <button role="tab" data-place="state" aria-selected="false">States</button>
+                <button role="tab" data-place="cuisine" aria-selected="false">Cuisines</button>
+              </div>
+              <div class="legend" id="places-legend"></div>
+              <div class="chart" id="chart-places"></div>
+              <p class="how">How to read: the dashed line is the average for all reviews (20.6%). The thin line through each bar end is the margin of error. A bar is only coloured when its whole margin is on one side of the average, so grey ones can't be told apart from average.</p>
+              <div class="table-wrap" hidden></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 6. Fix first -->
+        <section class="slide" data-title="Fix first" aria-label="Recommendations">
+          <div class="slide-inner">
+            <p class="q-num">The takeaway</p>
+            <h2 class="q-title">What should restaurant owners fix first?</h2>
+            <div class="recs" id="recs"></div>
+            <section class="notes glass">
+              <h2>About this analysis</h2>
+              <div class="notes-grid">
+                <div><h3>Data</h3><p>A random ~6.5% sample of the <a href="https://business.yelp.com/data/resources/open-dataset/" target="_blank" rel="noopener">Yelp Open Dataset</a>: <span id="n-reviews"></span> reviews of <span id="n-restaurants"></span> restaurants in 13 US states and Alberta, cleaned in PostgreSQL.</p></div>
+                <div><h3>Method</h3><p>Complaint topics were found with keyword lists in Python. Reviews of hotels, bars and other mixed businesses were kept only when the text is about dining (<span id="n-topic"></span> reviews). Star cost comes from a linear regression that splits the blame when a review mentions several complaints.</p></div>
+                <div><h3>Read with care</h3><p>Keyword tagging is approximate: about 19% of negative reviews match no topic. The numbers show what is <em>associated</em> with low ratings, not what causes them.</p></div>
+              </div>
+              <p class="foot">SQL, notebooks and code: <a href="https://github.com/MIZZYAYO/yelp-restaurant-complaint-analysis" target="_blank" rel="noopener">GitHub repository</a> · Data snapshot <span id="generated"></span> · <button class="link-btn" id="restart" type="button">Start again</button></p>
+            </section>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="pager glass" aria-label="Navigation">
+      <button class="nav-btn" id="prev" type="button" aria-label="Previous">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Back</span>
+      </button>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+      <button class="nav-btn primary" id="next" type="button" aria-label="Next">
+        <span id="next-label">Next</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </footer>
+  </div>
+
+  <div class="tooltip" id="tooltip" role="status" hidden></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
